@@ -6,7 +6,6 @@
     <title>BPL 2025 | Watch Live</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js/dist/video-js.css">
     <style>
-        /* Global Styles */
         * {
             margin: 0;
             padding: 0;
@@ -24,7 +23,6 @@
             overflow: hidden;
         }
 
-        /* Container Styles */
         .container {
             text-align: center;
             max-width: 800px;
@@ -35,7 +33,6 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
         }
 
-        /* Button Styles */
         .watch-button {
             display: inline-block;
             background: linear-gradient(45deg, #ff416c, #ff4b2b);
@@ -57,7 +54,6 @@
             transform: scale(1.05);
         }
 
-        /* Video Player Styles */
         #videoPlayerContainer {
             margin-top: 20px;
             display: none;
@@ -73,20 +69,18 @@
 </head>
 <body>
     <div class="container">
-        <!-- Watch Now Button -->
         <button class="watch-button" id="bplButton">BPL 2025 | Watch Now</button>
 
-        <!-- Video Player Container -->
         <div id="videoPlayerContainer">
             <video id="videoPlayer" class="video-js vjs-default-skin" controls preload="auto" data-setup="{}">
-                <!-- Placeholder for HLS Stream -->
+                <!-- Placeholder for M3U8 Stream -->
             </video>
         </div>
     </div>
 
     <!-- Video.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/video.js/dist/video.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/videojs-contrib-hls/dist/videojs-contrib-hls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@0.14.19/dist/hls.min.js"></script>
     <script>
         document.getElementById('bplButton').addEventListener('click', () => {
             // Display the video player container
@@ -94,22 +88,43 @@
             videoContainer.style.display = 'block';
 
             // Initialize the video player
-            const player = videojs('videoPlayer', {
-                autoplay: true,
-                controls: true,
-                fluid: true,
-                preload: 'auto',
-                sources: [{
-                    src: 'https://t.bdixtv24.com/tsportshd/stream.php?stream=https://live-cdn.tsports.com/live-02/master_1080.m3u8',
-                    type: 'application/x-mpegURL'
-                }],
-                techOrder: ['html5']
-            });
+            const video = document.getElementById('videoPlayer');
 
-            // Handle errors
-            player.on('error', () => {
-                alert('Failed to load the stream. Please check the link or your internet connection.');
-            });
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource('https://t.bdixtv24.com/tsportshd/stream.php?stream=https://live-cdn.tsports.com/live-02/master_1080.m3u8');
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                    video.play();
+                });
+
+                hls.on(Hls.Events.ERROR, function (event, data) {
+                    if (data.fatal) {
+                        switch (data.type) {
+                            case Hls.ErrorTypes.NETWORK_ERROR:
+                                alert('Network error occurred. Please check your connection.');
+                                break;
+                            case Hls.ErrorTypes.MEDIA_ERROR:
+                                alert('Media error occurred.');
+                                break;
+                            case Hls.ErrorTypes.OTHER_ERROR:
+                                alert('Some other error occurred.');
+                                break;
+                            default:
+                                alert('An unknown error occurred.');
+                                break;
+                        }
+                    }
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                // For Safari
+                video.src = 'https://t.bdixtv24.com/tsportshd/stream.php?stream=https://live-cdn.tsports.com/live-02/master_1080.m3u8';
+                video.addEventListener('canplay', function () {
+                    video.play();
+                });
+            } else {
+                alert('HLS is not supported in your browser.');
+            }
         });
     </script>
 </body>
