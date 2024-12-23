@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BPL 2025 | Watch Live</title>
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js/dist/video-js.css">
     <style>
         /* Global Styles */
         * {
@@ -33,18 +33,6 @@
             background: rgba(0, 0, 0, 0.7);
             border-radius: 15px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-            animation: fadeIn 1.5s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         /* Button Styles */
@@ -75,8 +63,9 @@
             display: none;
         }
 
-        video {
+        .video-js {
             width: 100%;
+            height: auto;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
         }
@@ -89,42 +78,37 @@
 
         <!-- Video Player Container -->
         <div id="videoPlayerContainer">
-            <video id="videoPlayer" class="plyr" playsinline controls>
-                <!-- Updated M3U8 Link -->
-                <source src="https://t.bdixtv24.com/tsportshd/stream.php?stream=https://live-cdn.tsports.com/live-02/master_1080.m3u8" type="application/x-mpegURL">
+            <video id="videoPlayer" class="video-js vjs-default-skin" controls preload="auto" data-setup="{}">
+                <!-- Placeholder for HLS Stream -->
             </video>
         </div>
     </div>
 
-    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+    <!-- Video.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/video.js/dist/video.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/videojs-contrib-hls/dist/videojs-contrib-hls.js"></script>
     <script>
-        // Button Click Event
         document.getElementById('bplButton').addEventListener('click', () => {
+            // Display the video player container
             const videoContainer = document.getElementById('videoPlayerContainer');
             videoContainer.style.display = 'block';
 
-            // Initialize Plyr
-            const player = new Plyr('#videoPlayer', {
-                controls: [
-                    'play', 
-                    'progress', 
-                    'current-time', 
-                    'mute', 
-                    'volume', 
-                    'settings', 
-                    'fullscreen'
-                ],
-                settings: ['quality', 'speed', 'loop'],
-                quality: {
-                    default: 720,
-                    options: [360, 480, 720, 1080], // Adaptable to available qualities
-                },
+            // Initialize the video player
+            const player = videojs('videoPlayer', {
+                autoplay: true,
+                controls: true,
+                fluid: true,
+                preload: 'auto',
+                sources: [{
+                    src: 'https://t.bdixtv24.com/tsportshd/stream.php?stream=https://live-cdn.tsports.com/live-02/master_1080.m3u8',
+                    type: 'application/x-mpegURL'
+                }],
+                techOrder: ['html5']
             });
 
-            // Error Handling
-            player.on('error', (event) => {
-                alert('The video failed to load. Please try again later.');
-                console.error('Player Error:', event);
+            // Handle errors
+            player.on('error', () => {
+                alert('Failed to load the stream. Please check the link or your internet connection.');
             });
         });
     </script>
