@@ -54,28 +54,46 @@
 <body>
 
     <div class="container">
-        <button class="watch-button" onclick="startStream()">BPL 2025 | Watch Now</button>
+        <button class="watch-button" id="watchBtn">BPL 2025 | Watch Now</button>
 
-        <video id="videoPlayer" controls style="display: none;">
-            <source id="videoSource" type="application/x-mpegURL">
-        </video>
+        <div id="videoPlayerContainer" style="display: none;">
+            <video id="videoPlayer" controls></video>
+        </div>
     </div>
 
+    <!-- Include HLS.js -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@0.14.19/dist/hls.min.js"></script>
     <script>
-        function startStream() {
+        document.getElementById('watchBtn').addEventListener('click', function() {
             const videoElement = document.getElementById('videoPlayer');
-            const videoSource = document.getElementById('videoSource');
-            
-            // Set the M3U8 link for the video source
-            videoSource.src = "https://t.bdixtv24.com/tsportshd/stream.php?stream=https://live-cdn.tsports.com/live-02/master_1080.m3u8";
-            
-            // Show the video player
-            videoElement.style.display = 'block';
-            
-            // Start playing the video
-            videoElement.load();
-            videoElement.play();
-        }
+            const videoContainer = document.getElementById('videoPlayerContainer');
+
+            // Show video player
+            videoContainer.style.display = 'block';
+
+            if (Hls.isSupported()) {
+                // HLS.js is supported, use it
+                const hls = new Hls();
+                hls.loadSource('https://t.bdixtv24.com/tsportshd/stream.php?stream=https://live-cdn.tsports.com/live-02/master_1080.m3u8');
+                hls.attachMedia(videoElement);
+
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    videoElement.play();
+                });
+
+                hls.on(Hls.Events.ERROR, function(event, data) {
+                    if (data.fatal) {
+                        alert('Error loading stream: ' + data.type);
+                    }
+                });
+            } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+                // For Safari browser (built-in HLS support)
+                videoElement.src = 'https://t.bdixtv24.com/tsportshd/stream.php?stream=https://live-cdn.tsports.com/live-02/master_1080.m3u8';
+                videoElement.play();
+            } else {
+                alert('HLS not supported on your browser.');
+            }
+        });
     </script>
 
 </body>
