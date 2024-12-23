@@ -4,128 +4,79 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BPL 2025 | Watch Live</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/video.js/dist/video-js.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: #fff;
+            font-family: Arial, sans-serif;
+            background-color: #1e3c72;
+            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            overflow: hidden;
+            margin: 0;
         }
 
         .container {
             text-align: center;
-            max-width: 800px;
-            width: 90%;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
         }
 
         .watch-button {
-            display: inline-block;
-            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            background: #ff4b2b;
             color: white;
-            padding: 15px 40px;
+            padding: 15px 30px;
             font-size: 1.5rem;
-            font-weight: bold;
             border: none;
-            border-radius: 30px;
+            border-radius: 25px;
             cursor: pointer;
-            text-decoration: none;
             box-shadow: 0 4px 10px rgba(255, 75, 43, 0.6);
-            transition: all 0.3s ease-in-out;
+            transition: all 0.3s ease;
         }
 
         .watch-button:hover {
-            background: linear-gradient(45deg, #ff4b2b, #ff416c);
+            background: #ff416c;
             box-shadow: 0 6px 15px rgba(255, 75, 43, 0.8);
             transform: scale(1.05);
         }
 
-        #videoPlayerContainer {
-            margin-top: 20px;
-            display: none;
-        }
-
-        .video-js {
+        video {
             width: 100%;
+            max-width: 720px;
             height: auto;
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <button class="watch-button" id="bplButton">BPL 2025 | Watch Now</button>
 
-        <div id="videoPlayerContainer">
-            <video id="videoPlayer" class="video-js vjs-default-skin" controls preload="auto" data-setup="{}">
-                <!-- Placeholder for M3U8 Stream -->
-            </video>
-        </div>
+    <div class="container">
+        <button class="watch-button" onclick="startStream()">BPL 2025 | Watch Now</button>
+
+        <video id="videoPlayer" controls style="display: none;">
+            <source id="videoSource" type="application/x-mpegURL">
+        </video>
     </div>
 
-    <!-- Video.js Library -->
-    <script src="https://cdn.jsdelivr.net/npm/video.js/dist/video.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@0.14.19/dist/hls.min.js"></script>
     <script>
-        document.getElementById('bplButton').addEventListener('click', () => {
-            // Display the video player container
-            const videoContainer = document.getElementById('videoPlayerContainer');
-            videoContainer.style.display = 'block';
-
-            // Initialize the video player
-            const video = document.getElementById('videoPlayer');
-
-            if (Hls.isSupported()) {
-                const hls = new Hls();
-                hls.loadSource('https://t.bdixtv24.com/tsportshd/stream.php?stream=https://live-cdn.tsports.com/live-02/master_1080.m3u8');
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                    video.play();
-                });
-
-                hls.on(Hls.Events.ERROR, function (event, data) {
-                    if (data.fatal) {
-                        switch (data.type) {
-                            case Hls.ErrorTypes.NETWORK_ERROR:
-                                alert('Network error occurred. Please check your connection.');
-                                break;
-                            case Hls.ErrorTypes.MEDIA_ERROR:
-                                alert('Media error occurred.');
-                                break;
-                            case Hls.ErrorTypes.OTHER_ERROR:
-                                alert('Some other error occurred.');
-                                break;
-                            default:
-                                alert('An unknown error occurred.');
-                                break;
-                        }
-                    }
-                });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                // For Safari
-                video.src = 'https://t.bdixtv24.com/tsportshd/stream.php?stream=https://live-cdn.tsports.com/live-02/master_1080.m3u8';
-                video.addEventListener('canplay', function () {
-                    video.play();
-                });
-            } else {
-                alert('HLS is not supported in your browser.');
-            }
-        });
+        function startStream() {
+            const videoElement = document.getElementById('videoPlayer');
+            const videoSource = document.getElementById('videoSource');
+            
+            // Set the M3U8 link for the video source
+            videoSource.src = "https://t.bdixtv24.com/tsportshd/stream.php?stream=https://live-cdn.tsports.com/live-02/master_1080.m3u8";
+            
+            // Show the video player
+            videoElement.style.display = 'block';
+            
+            // Start playing the video
+            videoElement.load();
+            videoElement.play();
+        }
     </script>
+
 </body>
 </html>
