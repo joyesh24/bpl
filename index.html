@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BPL 2025 | Watch Live</title>
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Container Styles */
+        .container {
+            text-align: center;
+            max-width: 800px;
+            width: 90%;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Button Styles */
+        .watch-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 4px 10px rgba(255, 75, 43, 0.6);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .watch-button:hover {
+            background: linear-gradient(45deg, #ff4b2b, #ff416c);
+            box-shadow: 0 6px 15px rgba(255, 75, 43, 0.8);
+            transform: scale(1.05);
+        }
+
+        /* Video Player Styles */
+        #videoPlayerContainer {
+            margin-top: 20px;
+            display: none;
+        }
+
+        video {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Watch Now Button -->
+        <button class="watch-button" id="bplButton">BPL 2025 | Watch Now</button>
+
+        <!-- Video Player Container -->
+        <div id="videoPlayerContainer">
+            <video id="videoPlayer" class="plyr" playsinline controls>
+                <!-- Updated M3U8 Link -->
+                <source src="https://t.bdixtv24.com/tsportshd/stream.php?stream=https://live-cdn.tsports.com/live-02/master_1080.m3u8" type="application/x-mpegURL">
+            </video>
+        </div>
+    </div>
+
+    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+    <script>
+        // Button Click Event
+        document.getElementById('bplButton').addEventListener('click', () => {
+            const videoContainer = document.getElementById('videoPlayerContainer');
+            videoContainer.style.display = 'block';
+
+            // Initialize Plyr
+            const player = new Plyr('#videoPlayer', {
+                controls: [
+                    'play', 
+                    'progress', 
+                    'current-time', 
+                    'mute', 
+                    'volume', 
+                    'settings', 
+                    'fullscreen'
+                ],
+                settings: ['quality', 'speed', 'loop'],
+                quality: {
+                    default: 720,
+                    options: [360, 480, 720, 1080], // Adaptable to available qualities
+                },
+            });
+
+            // Error Handling
+            player.on('error', (event) => {
+                alert('The video failed to load. Please try again later.');
+                console.error('Player Error:', event);
+            });
+        });
+    </script>
+</body>
+</html>
